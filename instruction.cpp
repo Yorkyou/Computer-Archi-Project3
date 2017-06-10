@@ -10,7 +10,7 @@ using namespace::std;
 #include <map>
 #include <algorithm>
 #include "instruction.hpp"
-extern std::map<int,bitset<32>> D_disk,I_disk;
+extern std::map< int,bitset<32> > D_disk,I_disk;
 extern void Find_instruction(bitset<32> a,int cycle);
 extern void Find_data(bitset<32> a,int cycle);
 string Instruction::BinaryToHex(bitset<32>a){

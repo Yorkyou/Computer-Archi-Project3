@@ -10,7 +10,7 @@
 #include <math.h>
 #include "register.hpp"
 
-extern  std::map<int,bitset<32>> D_disk;
+extern  std::map< int,bitset<32> > D_disk;
 string BinaryToHex(bitset<32>a){
     string r="";
     bitset<4>data;
