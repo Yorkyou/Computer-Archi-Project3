@@ -10,6 +10,7 @@
 #define register_hpp
 #include <bitset>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
 class Reg{

@@ -10,6 +10,13 @@ using namespace::std;
 #include <map>
 #include <algorithm>
 #include "instruction.hpp"
+namespace std{
+    template < typename T > std::string to_string(const T&n){
+        std::ostringstream stm;
+        stm << n;
+        return stm.str();
+    }
+}
 extern std::map< int,bitset<32> > D_disk,I_disk;
 extern void Find_instruction(bitset<32> a,int cycle);
 extern void Find_data(bitset<32> a,int cycle);
