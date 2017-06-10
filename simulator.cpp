@@ -77,7 +77,7 @@ int main(int argc, const char * argv[]) {//open data
     snapshot << in.getOut();
     Ass << in.getAss();
     //trace
-    cout << "\nASS : \n" << in.getAss() << "\n\nOut:\n" << WriteOutput();
+    //cout << "\nASS : \n" << in.getAss() << "\n\nOut:\n" << WriteOutput();
     return 0;
 }
 string HextoBinary(char ch){

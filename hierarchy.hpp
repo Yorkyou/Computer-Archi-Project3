@@ -87,7 +87,7 @@ void Find_instruction(bitset<32>,int);//接收VA
 void Find_data(bitset<32>,int);
 string WriteOutput(){
     output = "";
-    output = output+ "ICache :\n"+"# hits: "+to_string(hit_ICache)+"\n# misses: "+to_string(miss_ICache)+"\n\nDCache :\n"+"# hits: "+to_string(hit_DCache)+"\n# misses: "+to_string(miss_DCache)+"\n\nITLB :\n"+"# hits: "+to_string(hit_ITLB)+"\n# misses: "+to_string(miss_ITLB)+"\n\nDTLB :\n"+"# hits: "+to_string(hit_DTLB)+"\n# misses: "+to_string(miss_DTLB)+"\n\nIPageTable :\n"+"# hits: "+to_string(hit_IpageTable)+"\n# misses: "+to_string(miss_IpageTable)+"\n\nDPageTable :\n"+"# hits: "+to_string(hit_DpageTable)+"\n# misses: "+to_string(miss_DpageTable);
+    output = output+ "ICache :\n"+"# hits: "+to_string(hit_ICache)+"\n# misses: "+to_string(miss_ICache)+"\n\nDCache :\n"+"# hits: "+to_string(hit_DCache)+"\n# misses: "+to_string(miss_DCache)+"\n\nITLB :\n"+"# hits: "+to_string(hit_ITLB)+"\n# misses: "+to_string(miss_ITLB)+"\n\nDTLB :\n"+"# hits: "+to_string(hit_DTLB)+"\n# misses: "+to_string(miss_DTLB)+"\n\nIPageTable :\n"+"# hits: "+to_string(hit_IpageTable)+"\n# misses: "+to_string(miss_IpageTable)+"\n\nDPageTable :\n"+"# hits: "+to_string(hit_DpageTable)+"\n# misses: "+to_string(miss_DpageTable)+"\n\n";
     return output;
 }
 
@@ -302,16 +302,29 @@ void Find_instruction(bitset<32> a,int cycle){
     int tag = p_adr / int(pow(2, size_setoffset+size_byteoffset));
     //check if data exist in ICache
     bool found = false;//all true用在滿的時候replacement policy
+    bool allTrue=true;
     for (int x = 0;x < set_Iassociativity;x++) {//needs to handle fully asso
         if (ICache[setindex][x].valid && ICache[setindex][x].tag==tag) {
             found = true;
             ICache[setindex][x].MRU = true;
+            for (int y = 0; y < set_Iassociativity; y++) {
+                if (y!=x && ICache[setindex][y].MRU==false){
+                    allTrue = false;
+                    break;
+                }
+            }
+            if (allTrue) {
+                for (int y = 0; y < set_Iassociativity; y++) {
+                    if (y!=x)ICache[setindex][y].MRU=false;
+                }
+            }
         }
     }
     if(found) hit_ICache++;
     else {//not found in Cache -->把東西搬進來:maybe replace
         miss_ICache++;
         bool allTrue=true;
+        
         for (int x=0; x < set_Iassociativity; x++) {
             if (set_Iassociativity==1) {
                 block t(tag,true,true,v_adr);
@@ -396,9 +409,6 @@ void Find_data(bitset<32> a,int cycle){
         }
         else{//Page Fault-->(1)更新mem(2)update PageTable and ITLB(3)clean related PPA info
             miss_DpageTable++;
-            if (cycle==76) {
-                cout << "hello";
-            }
             //先去Memory找一塊空的範圍or replace
             int which_to_use=0,num=Limit;
             bool replace = false;
@@ -474,12 +484,23 @@ void Find_data(bitset<32> a,int cycle){
     int tag = p_adr / int(pow(2, size_setoffset+size_byteoffset));
     //check if data exist in DCache
     bool found = false;//all true用在滿的時候replacement policy
+    bool allTrue = true;
     //Dcache output
-    
     for (int x = 0;x < set_Dassociativity;x++) {//needs to handle fully asso
         if (DCache[setindex][x].valid && DCache[setindex][x].tag==tag) {
             found = true;
             DCache[setindex][x].MRU = true;
+            for (int y = 0; y < set_Dassociativity; y++) {
+                if (y!=x && DCache[setindex][y].MRU==false){
+                    allTrue = false;
+                    break;
+                }
+            }
+            if (allTrue) {
+                for (int y = 0; y < set_Dassociativity; y++) {
+                    if (y!=x)DCache[setindex][y].MRU=false;
+                }
+            }
         }
     }
     if(found) hit_DCache++;
