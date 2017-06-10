@@ -17,8 +17,16 @@
 //
 using namespace::std;
 #include <iostream>
+#include <sstream>
 #include "register.hpp"
 
+namespace std{
+    template < typename T > std::string to_string(const T&n){
+        std::ostringstream stm;
+        stm << n;
+        return stm.str();
+    }
+}
 class Instruction{//implementation
     friend class Reg;
 public:
@@ -31,7 +39,6 @@ public:
     int cycle;
 private:
     bitset<32> Oldreg[35];
-    const int gap = 4;
     int it;
     std::string output;
     std::string Ass;

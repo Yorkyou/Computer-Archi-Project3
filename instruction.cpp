@@ -8,6 +8,7 @@
 using namespace::std;
 #include <iostream>
 #include <map>
+#include <algorithm>
 #include "instruction.hpp"
 extern std::map<int,bitset<32>> D_disk,I_disk;
 extern void Find_instruction(bitset<32> a,int cycle);
@@ -182,7 +183,7 @@ void Instruction::StartInstrctuion(Reg *r){
                 r->addi(rt,rs,r->BitsetToSigned16(immediate),cycle+1);
                 break;
             case 0x09:
-                Ass+=to_string(cycle)+"addiu $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ullong())+"\n";
+                Ass+=to_string(cycle)+"addiu $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ulong())+"\n";
                 r->addiu(rt,rs,r->BitsetToSigned16(immediate),cycle+1);
                 break;
             case 0x23://lw
@@ -230,16 +231,16 @@ void Instruction::StartInstrctuion(Reg *r){
                 r->lui(rt, immediate,cycle+1);
                 break;
             case 0x0C://andi
-                Ass+=to_string(cycle)+"andi $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ullong())+"\n";
-                r->Andi(rt, rs, immediate.to_ullong(),cycle+1);
+                Ass+=to_string(cycle)+"andi $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ulong())+"\n";
+                r->Andi(rt, rs, immediate.to_ulong(),cycle+1);
                 break;
             case 0x0D://ori
-                Ass+=to_string(cycle)+"ori $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ullong())+"\n";;
-                r->Ori(rt, rs, immediate.to_ullong(),cycle+1);
+                Ass+=to_string(cycle)+"ori $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ulong())+"\n";;
+                r->Ori(rt, rs, immediate.to_ulong(),cycle+1);
                 break;
             case 0x0E://nori
-                Ass+=to_string(cycle)+"nori $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ullong())+"\n";
-                r->Nori(rt, rs, immediate.to_ullong(),cycle+1);
+                Ass+=to_string(cycle)+"nori $"+to_string(rt)+",$"+to_string(rs)+","+to_string(immediate.to_ulong())+"\n";
+                r->Nori(rt, rs, immediate.to_ulong(),cycle+1);
                 break;
             case 0x0A://slti
                 Ass+=to_string(cycle)+"slti $"+to_string(rt)+",$"+to_string(rs)+","+to_string(r->BitsetToSigned16(immediate))+"\n";

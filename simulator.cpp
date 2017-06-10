@@ -8,6 +8,7 @@
 #include "hierarchy.hpp"
 #include "register.hpp"
 #include "instruction.hpp"
+#include <stdlib.h>
 #include <fstream>
 #include <iostream>
 #include <iomanip>

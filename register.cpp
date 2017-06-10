@@ -7,6 +7,7 @@
 //
 #include <iostream>
 #include <map>
+#include <math.h>
 #include "register.hpp"
 
 extern  std::map<int,bitset<32>> D_disk;

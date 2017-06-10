@@ -17,6 +17,7 @@
 //  Copyright © 2017年 York You. All rights reserved.
 
 using namespace std;
+#include <sstream>
 #include <iostream>
 #include <string>
 #include <map>
@@ -25,6 +26,13 @@ using namespace std;
 #include <math.h>
 //implementing the the hierarchy
 #define Limit 500001
+namespace std{
+    template < typename T > std::string to_string(const T&n){
+        std::ostringstream stm;
+        stm << n;
+        return stm.str();
+    }
+}
 class block{
 public:
     int tag,va;
@@ -45,8 +53,8 @@ string output;
 
 
 //Disk
-std::map<int,bitset<32>> D_disk;
-std::map<int,bitset<32>> I_disk;
+std::map< int,bitset<32> > D_disk;
+std::map< int,bitset<32> > I_disk;
 int D_size,I_size;
 
 //Mem,LRU-->index by PPA
@@ -114,7 +122,7 @@ void Initial_Disk(string Dbuffer,string Ibuffer)
     data=bitset<32>(Ibuffer.substr(it,32));
     I_size = int(data.to_ulong());//i_size
     //up to 1023-->資料從initial pc開始填寫
-    int index=int(initialPC.to_ullong());
+    int index=int(initialPC.to_ulong());
     for (int i = 0; i < I_size; i++) {
         it+=32;
         data=bitset<32>(Ibuffer.substr(it,32));
@@ -205,10 +213,10 @@ void Find_instruction(bitset<32> a,int cycle){
             }
             else {//ITLB滿了要先replace舊的-->search last used cycle but != 0
                 int which_to_replace = 0,num=Limit;
-                for (auto x : ITLB) {
-                    if (last_used_cycle_Itlb[x.first] < num &&last_used_cycle_Itlb[x.first]!=0) {
-                        num = last_used_cycle_Itlb[x.first];
-                        which_to_replace = x.first;
+                for (map<int,int>::iterator x=ITLB.begin(); x!=ITLB.end(); x++) {
+                    if (last_used_cycle_Itlb[x->first] < num &&last_used_cycle_Itlb[x->first]!=0){
+                        num = last_used_cycle_Itlb[x->first];
+                        which_to_replace = x->first;
                     }
                 }
                 ITLB.erase(which_to_replace);
@@ -236,17 +244,17 @@ void Find_instruction(bitset<32> a,int cycle){
             }
             last_used_cycle_Ipage[which_to_use] = cycle;//代表被使用
             //update Page Table
-            for (auto x : IPageTable) {
-                if (x.second==which_to_use) {
-                    IPageTable.erase(x.first);
+            for (map<int,int>::iterator x=IPageTable.begin(); x!=IPageTable.end(); x++) {
+                if (x->second==which_to_use) {
+                    IPageTable.erase(x->first);
                     break;
                 }
             }
             IPageTable[VPA] = which_to_use;
             //update ITLB
-            for (auto x : ITLB) {
-                if (x.second==which_to_use) {
-                    ITLB.erase(x.first);
+            for (map<int,int>::iterator x=ITLB.begin(); x!=ITLB.end(); x++) {
+                if (x->second==which_to_use) {
+                    ITLB.erase(x->first);
                     break;
                 }
             }
@@ -256,10 +264,10 @@ void Find_instruction(bitset<32> a,int cycle){
             }
             else {//ITLB滿了要先replace舊的-->search last used cycle but != 0
                 int which_to_replace = 0,num=Limit;
-                for (auto x : ITLB) {
-                    if (last_used_cycle_Itlb[x.first] <num&&last_used_cycle_Itlb[x.first]!=0) {
-                        num = last_used_cycle_Itlb[x.first];
-                        which_to_replace = x.first;
+                for (map<int,int>::iterator x=ITLB.begin(); x!=ITLB.end(); x++) {
+                    if (last_used_cycle_Itlb[x->first] <num&&last_used_cycle_Itlb[x->first]!=0) {
+                        num = last_used_cycle_Itlb[x->first];
+                        which_to_replace = x->first;
                     }
                 }
                 ITLB.erase(which_to_replace);
@@ -374,10 +382,10 @@ void Find_data(bitset<32> a,int cycle){
             }
             else {//ITLB滿了要先replace舊的-->search last used cycle but != 0
                 int which_to_replace = 0,num=Limit;
-                for (auto x : DTLB) {
-                    if (last_used_cycle_Dtlb[x.first] < num&&last_used_cycle_Dtlb[x.first]!=0) {
-                        num = last_used_cycle_Dtlb[x.first];
-                        which_to_replace = x.first;
+                for (map<int,int>::iterator x=DTLB.begin(); x!=DTLB.end(); x++) {
+                    if (last_used_cycle_Dtlb[x->first] < num&&last_used_cycle_Dtlb[x->first]!=0) {
+                        num = last_used_cycle_Dtlb[x->first];
+                        which_to_replace = x->first;
                     }
                 }
                 DTLB.erase(which_to_replace);
@@ -408,18 +416,17 @@ void Find_data(bitset<32> a,int cycle){
             }
             last_used_cycle_Dpage[which_to_use] = cycle;//代表被使用
             //update Page Table
-            
-            for (auto x : DPageTable) {
-                if (x.second==which_to_use) {
-                    DPageTable.erase(x.first);
+            for (map<int,int>::iterator x=DPageTable.begin(); x!=DPageTable.end(); x++) {
+                if (x->second==which_to_use) {
+                    DPageTable.erase(x->first);
                     break;
                 }
             }
             DPageTable[VPA] = which_to_use;
             //update DTLB
-            for (auto x : DTLB) {
-                if (x.second==which_to_use) {
-                    DTLB.erase(x.first);
+            for (map<int,int>::iterator x=DTLB.begin(); x!=DTLB.end(); x++) {
+                if (x->second==which_to_use) {
+                    DTLB.erase(x->first);
                     break;
                 }
             }
@@ -429,10 +436,10 @@ void Find_data(bitset<32> a,int cycle){
             }
             else {//ITLB滿了要先replace舊的-->search last used cycle but != 0
                 int which_to_replace = 0,num=Limit;
-                for (auto x : DTLB) {
-                    if (last_used_cycle_Dtlb[x.first]<num&&last_used_cycle_Dtlb[x.first]!=0) {
-                        num = last_used_cycle_Dtlb[x.first];
-                        which_to_replace = x.first;
+                for (map<int,int>::iterator x=DTLB.begin(); x!=DTLB.end(); x++) {
+                    if (last_used_cycle_Dtlb[x->first]<num&&last_used_cycle_Dtlb[x->first]!=0) {
+                        num = last_used_cycle_Dtlb[x->first];
+                        which_to_replace = x->first;
                     }
                 }
                 DTLB.erase(which_to_replace);
@@ -503,26 +510,25 @@ void Find_data(bitset<32> a,int cycle){
             }
         }
     }
-        cout << "cycle ,PC " << cycle << " " << a.to_ulong() << endl;
-        cout << "DTLB hit , miss" << hit_DTLB << " " << miss_DTLB << endl;
-        cout << "Dpagetable hit , miss" << hit_DpageTable << " " << miss_DpageTable << endl;
-        cout << "Dcache hit , miss " << hit_DCache << "  " << miss_DCache << endl;
-        cout << "\nDTLB :\n";
-        for(auto i : DTLB){
-            cout << "key: " << i.first <<" value :"<<i.second << endl;
-        }
-        cout << "DPageTable :\n";
-        for(auto i : DPageTable) {
-            cout << "key: " << i.first <<" value :"<<i.second << endl;
-        }
-        cout << "DCache :\n";
-        for (int i = 0; i < num_Dset; i++) {
-            for (int j = 0; j < set_Dassociativity; j++) {
-                cout << "set " << i << "block " << j << " tag " << DCache[i][j].tag << " MRU " << DCache[i][j].MRU << " valid " << DCache[i][j].valid << " VA "<< DCache[i][j].va << endl;
-            }
-        }
-        cout << "\n";
-    
+//        cout << "cycle ,PC " << cycle << " " << a.to_ulong() << endl;
+//        cout << "DTLB hit , miss" << hit_DTLB << " " << miss_DTLB << endl;
+//        cout << "Dpagetable hit , miss" << hit_DpageTable << " " << miss_DpageTable << endl;
+//        cout << "Dcache hit , miss " << hit_DCache << "  " << miss_DCache << endl;
+//        cout << "\nDTLB :\n";
+//        for(auto i : DTLB){
+//            cout << "key: " << i.first <<" value :"<<i.second << endl;
+//        }
+//        cout << "DPageTable :\n";
+//        for(auto i : DPageTable) {
+//            cout << "key: " << i.first <<" value :"<<i.second << endl;
+//        }
+//        cout << "DCache :\n";
+//        for (int i = 0; i < num_Dset; i++) {
+//            for (int j = 0; j < set_Dassociativity; j++) {
+//                cout << "set " << i << "block " << j << " tag " << DCache[i][j].tag << " MRU " << DCache[i][j].MRU << " valid " << DCache[i][j].valid << " VA "<< DCache[i][j].va << endl;
+//            }
+//        }
+//        cout << "\n";
 }
 bitset<32> getiSP(){return initialSP;}
 bitset<32> getiPC(){return initialPC;}
