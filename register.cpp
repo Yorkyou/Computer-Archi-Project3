@@ -9,7 +9,13 @@
 #include <map>
 #include <math.h>
 #include "register.hpp"
-
+namespace std{
+    template < typename T > std::string to_string(const T&n){
+        std::ostringstream stm;
+        stm << n;
+        return stm.str();
+    }
+}
 extern  std::map< int,bitset<32> > D_disk;
 string BinaryToHex(bitset<32>a){
     string r="";
